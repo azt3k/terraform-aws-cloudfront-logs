@@ -4,9 +4,9 @@ resource "aws_s3_bucket" "this" {
   bucket = var.bucket_name
 
   tags = var.tags
-
+  
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = var.prevent_s3_destruction
   }
 }
 

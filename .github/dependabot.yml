@@ -10,6 +10,13 @@ updates:
   - package-ecosystem: npm
     directory: /lambda
     schedule:
+      interval: weekly
+    assignees:
+      - fmasuhr
+
+  - package-ecosystem: terraform
+    directory: /examples/basic
+    schedule:
       interval: daily
     assignees:
       - fmasuhr

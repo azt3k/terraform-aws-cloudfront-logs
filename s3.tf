@@ -49,8 +49,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
       noncurrent_days = 1
     }
   }
-
-  tags = var.tags
 }
 
 resource "aws_s3_bucket_public_access_block" "this" {

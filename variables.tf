@@ -19,3 +19,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "enable_data_encryption" {
+  type = bool
+  description = "Enables data encryption on specific resources"
+  default = false
+}

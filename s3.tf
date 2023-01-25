@@ -2,8 +2,27 @@ data "aws_canonical_user_id" "current" {}
 
 resource "aws_s3_bucket" "this" {
   bucket = var.bucket_name
-
   tags = var.tags
+}
+
+resource "aws_kms_key" "this" {
+  count = var.enable_data_encryption ? 1 : 0
+  description = "This key is used to encrypt aws_s3_bucket.this objects"
+  deletion_window_in_days = 7
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
+  count = var.enable_data_encryption ? 1 : 0
+  bucket = aws_s3_bucket.this.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.this[0].arn
+      sse_algorithm = "aws:kms"
+    }
+  }
+  depends_on = [
+    aws_kms_key.this
+  ]
 }
 
 resource "aws_s3_bucket_acl" "this" {

@@ -6,7 +6,7 @@ data "aws_iam_policy_document" "kms_cdn_s3_access" {
     sid = "Allow CloudFront to use the key to deliver logs"
     actions = ["kms:GenerateDataKey*"]
     effect = "Allow"
-    principal {
+    principals {
       type = "Service"
       identifiers = ["delivery.logs.amazonaws.com"]
     }

@@ -1,39 +1,32 @@
 resource "aws_lambda_function" "this" {
   function_name = var.name
-
-  runtime                        = "nodejs16.x"
-  handler                        = "index.handler"
-  timeout                        = 5
+  runtime = "nodejs16.x"
+  handler = "index.handler"
+  timeout = 5
   reserved_concurrent_executions = 3
-
   environment {
     variables = {
       CLOUDWATCH_LOGS_GROUP_ARN = aws_cloudwatch_log_group.logs.arn
     }
   }
-
   role = aws_iam_role.lambda.arn
-
-  filename         = data.archive_file.lambda.output_path
+  filename = data.archive_file.lambda.output_path
   source_code_hash = data.archive_file.lambda.output_base64sha256
-
   tags = var.tags
-
   depends_on = [aws_cloudwatch_log_group.lambda]
 }
 
 data "archive_file" "lambda" {
-  type        = "zip"
-  source_dir  = "${path.module}/lambda/src"
+  type = "zip"
+  source_dir = "${path.module}/lambda/src"
   output_path = ".terraform/tmp/lambda/${var.name}.zip"
 }
 
 data "aws_iam_policy_document" "lambda_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
-
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = ["lambda.amazonaws.com"]
     }
   }
@@ -41,9 +34,7 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 
 resource "aws_iam_role" "lambda" {
   name = "lambda-${var.name}"
-
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
-
   tags = var.tags
 }
 

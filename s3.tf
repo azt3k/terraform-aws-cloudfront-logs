@@ -1,19 +1,5 @@
 data "aws_canonical_user_id" "current" {}
 
-data "aws_iam_policy_document" "kms_cdn_s3_access" {
-  policy_id = "CDN Key Policy"
-  statement {
-    sid = "Allow CloudFront to use the key to deliver logs"
-    actions = ["kms:GenerateDataKey*"]
-    effect = "Allow"
-    principals {
-      type = "Service"
-      identifiers = ["delivery.logs.amazonaws.com"]
-    }
-    resources = ["*"]
-  }
-}
-
 resource "aws_s3_bucket" "this" {
   bucket = var.bucket_name
   tags = var.tags

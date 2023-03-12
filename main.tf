@@ -1,8 +1,10 @@
-# Policies
-
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 data "aws_partition" "current" {}
+data "aws_canonical_user_id" "current" {}
+
+# Policies
+
 data "aws_iam_policy_document" "kms_log_access" {
   policy_id = "key-policy-cloudwatch"
   statement {
@@ -26,6 +28,7 @@ data "aws_iam_policy_document" "kms_log_access" {
     resources = ["*"]
   }
 }
+
 data "aws_iam_policy_document" "kms_cdn_s3_access" {
   policy_id = "CDN Key Policy"
   statement {
@@ -45,6 +48,16 @@ data "aws_iam_policy_document" "kms_cdn_s3_access" {
     principals {
       type = "Service"
       identifiers = ["delivery.logs.amazonaws.com"]
+    }
+    resources = ["*"]
+  }
+  statement {
+    sid = "Allow Lambda to use the key to decrypt logs"
+    actions = ["kms:Decrypt*"]
+    effect = "Allow"
+    principals {
+      type = "aws"
+      identifiers = [format("arn:aws:iam::%s:role/lambda-%s", data.aws_caller_identity.current.account_id, var.name)]
     }
     resources = ["*"]
   }

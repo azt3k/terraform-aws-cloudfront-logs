@@ -1,39 +1,3 @@
-data "aws_canonical_user_id" "current" {}
-
-data "aws_iam_policy_document" "kms_cdn_s3_access" {
-  policy_id = "CDN Key Policy"
-  statement {
-    sid = "Enable IAM User Permissions"
-    actions = ["kms:*"]
-    effect = "Allow"
-    principals {
-      type = "AWS"
-      identifiers = [format("arn:%s:iam::%s:root", data.aws_partition.current.partition, data.aws_caller_identity.current.account_id)]
-    }
-    resources = ["*"]
-  }
-  statement {
-    sid = "Allow CloudFront to use the key to deliver logs"
-    actions = ["kms:GenerateDataKey*"]
-    effect = "Allow"
-    principals {
-      type = "Service"
-      identifiers = ["delivery.logs.amazonaws.com"]
-    }
-    resources = ["*"]
-  }
-  statement {
-    sid = "Allow Lambda to use the key to decrypt logs"
-    actions = ["kms:Decrypt*"]
-    effect = "Allow"
-    principals {
-      type = "aws"
-      identifiers = [format("arn:%s:iam::%s:root", data.aws_partition.current.partition, data.aws_caller_identity.current.account_id)]
-    }
-    resources = ["*"]
-  }
-}
-
 resource "aws_s3_bucket" "this" {
   bucket = var.bucket_name
   tags = var.tags

@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "kms_cdn_s3_access" {
     actions = ["kms:Decrypt*"]
     effect = "Allow"
     principals {
-      type = "aws"
+      type = "AWS"
       identifiers = [format("arn:aws:iam::%s:role/lambda-%s", data.aws_caller_identity.current.account_id, var.name)]
     }
     resources = ["*"]

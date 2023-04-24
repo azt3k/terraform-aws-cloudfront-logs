@@ -8,6 +8,9 @@ resource "aws_s3_bucket_ownership_controls" "this" {
   rule {
     object_ownership = "BucketOwnerPreferred"
   }
+  depends_on = [
+    aws_s3_bucket.this
+  ]
 }
 
 resource "aws_kms_key" "this" {
@@ -33,6 +36,10 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 
 resource "aws_s3_bucket_acl" "this" {
   bucket = aws_s3_bucket.this.id
+  depends_on = [
+    aws_s3_bucket.this,
+    aws_s3_bucket_ownership_controls.this
+  ]
   access_control_policy {
     owner {
       id = data.aws_canonical_user_id.current.id

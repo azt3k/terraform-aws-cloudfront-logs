@@ -3,6 +3,13 @@ resource "aws_s3_bucket" "this" {
   tags = var.tags
 }
 
+resource "aws_s3_bucket_ownership_controls" "this" {
+  bucket = aws_s3_bucket.this.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_kms_key" "this" {
   count = var.enable_data_encryption ? 1 : 0
   description = "This key is used to encrypt aws_s3_bucket.this objects"
